@@ -1,87 +1,85 @@
 package com.example.stablediffusion;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.Toast;
+
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import com.example.stablediffusion.api.ImageRequest; // Import our ImageRequest model
 import com.example.stablediffusion.api.ImageResponse; // Import our ImageResponse model
-import com.example.stablediffusion.api.StableDiffusionAPI; // Import our API interface
+
 
 import java.util.List;
-
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String BASE_URL = "https://modelslab.com/api/";
-    private Retrofit retrofit;
-    private StableDiffusionAPI apiService; // Use the StableDiffusionAPI interface
+    private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+        @Override
+        public void onActivityResult(Boolean result) {
+            if (result) {
+                Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Set up Retrofit with OkHttpClient
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build();
+        TextInputLayout promptLayout = findViewById(R.id.promptLayout);
+        TextInputEditText promptET = findViewById(R.id.promptET);
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL) // Ensure this matches our API base URL
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        SeekBar width = findViewById(R.id.width);
+        SeekBar height = findViewById(R.id.height);
+        SeekBar imageCount = findViewById(R.id.imageCount);
 
-        apiService = retrofit.create(StableDiffusionAPI.class); // Create an instance of our API service
+        Button generate = findViewById(R.id.generate);
+        RecyclerView recyclerView = findViewById(R.id.recycler);
 
-        // Create the API request object
-        ImageRequest request = new ImageRequest(
-                "3syYMIsTtVvMGJh3PNQ6YnSkWegyh0dcJ0btZwSg4GhqmXCZxRUyo2HElTiw", // Add my API key
-                "midjourney",
-                "actual 8K portrait photo of gareth person, portrait, happy colors, bright eyes, clear eyes, warm smile, smooth soft skin, big dreamy eyes, beautiful intricate colored hair, symmetrical, anime wide eyes, soft lighting, detailed face, by makoto shinkai, stanley artgerm lau, wlop, rossdraws, concept art, digital painting, looking into camera",
-                "painting, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, deformed, ugly, blurry, bad anatomy, bad proportions, extra limbs, cloned face, skinny, glitchy, double torso, extra arms, extra hands, mangled fingers, missing lips, ugly face, distorted face, extra legs, anime",
-                "512", "512", "1", "30",
-                "no", "yes", null, 7.5,
-                "no", "no", "no", "no",
-                null, null, "yes", "yes",
-                null, null, "DDPMScheduler",
-                null, null
-        );
+        ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage("Generating...");
 
-        // Make the API call
-        apiService.generateImage(request).enqueue(new Callback<ImageResponse>() {
+        OnLoaded onLoaded = new OnLoaded() {
             @Override
-            public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ImageResponse imageResponse = response.body();
-                    Log.d("MainActivity", "API Response: " + imageResponse); // Log the entire response
-
-                    if (imageResponse.getOutput() != null && !imageResponse.getOutput().isEmpty()) {
-                        List<String> images = imageResponse.getOutput();
-                        String imageUrl = images.get(0); // Assuming we're using the first URL
-                        Log.d("MainActivity", "Generated Image URL: " + imageUrl);
-                    } else {
-                        Log.e("MainActivity", "Image list is null or empty");
-                    }
-                } else {
-                    Log.e("MainActivity", "API Response unsuccessful: " + response.message());
-                }
+            public void loaded(ArrayList<String> arrayList) {
+                progressDialog.dismiss();
+                ImageRequest request = new ImageRequest(MainActivity.this, arrayList);
+                recyclerView.setAdapter(request);
             }
+        };
 
-
+        generate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call<ImageResponse> call, Throwable t) {
-                Log.e("MainActivity", "API call failed: " + t.getMessage());
+            public void onClick(View view) {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    activityResultLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                } else {
+                    if (Objects.requireNonNull(promptET.getText()).toString().isEmpty()) {
+                        promptLayout.setError("This Field is Required");
+                    } else {
+                        progressDialog.show();
+                        new ImageResponse(MainActivity.this).generate(promptET.getText().toString(), width.getProgress(), height.getProgress(), imageCount.getProgress(), onLoaded);
+                    }
+                }
             }
         });
     }

@@ -1,65 +1,94 @@
 package com.example.stablediffusion.api;
-public class ImageRequest {
-    private String key;
-    private String model_id;
-    private String prompt;
-    private String negative_prompt;
-    private String width;
-    private String height;
-    private String samples;
-    private String num_inference_steps;
-    private String safety_checker;
-    private String enhance_prompt;
-    private Object seed; // Can be null
-    private double guidance_scale;
-    private String multi_lingual;
-    private String panorama;
-    private String self_attention;
-    private String upscale;
-    private Object embeddings_model; // Can be null
-    private Object lora_model; // Can be null
-    private String tomesd;
-    private String use_karras_sigmas;
-    private Object vae; // Can be null
-    private Object lora_strength; // Can be null
-    private String scheduler;
-    private Object webhook; // Can be null
-    private Object track_id; // Can be null
 
-    // Constructor, getters, and setters
-    public ImageRequest(String key, String model_id, String prompt, String negative_prompt,
-                        String width, String height, String samples, String num_inference_steps,
-                        String safety_checker, String enhance_prompt, Object seed,
-                        double guidance_scale, String multi_lingual, String panorama,
-                        String self_attention, String upscale, Object embeddings_model,
-                        Object lora_model, String tomesd, String use_karras_sigmas,
-                        Object vae, Object lora_strength, String scheduler,
-                        Object webhook, Object track_id) {
-        this.key = key;
-        this.model_id = model_id;
-        this.prompt = prompt;
-        this.negative_prompt = negative_prompt;
-        this.width = width;
-        this.height = height;
-        this.samples = samples;
-        this.num_inference_steps = num_inference_steps;
-        this.safety_checker = safety_checker;
-        this.enhance_prompt = enhance_prompt;
-        this.seed = seed;
-        this.guidance_scale = guidance_scale;
-        this.multi_lingual = multi_lingual;
-        this.panorama = panorama;
-        this.self_attention = self_attention;
-        this.upscale = upscale;
-        this.embeddings_model = embeddings_model;
-        this.lora_model = lora_model;
-        this.tomesd = tomesd;
-        this.use_karras_sigmas = use_karras_sigmas;
-        this.vae = vae;
-        this.lora_strength = lora_strength;
-        this.scheduler = scheduler;
-        this.webhook = webhook;
-        this.track_id = track_id;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.example.stablediffusion.R;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
+public class ImageRequest extends RecyclerView.Adapter<ImageRequest.ViewHolder> {
+    Context context;
+    ArrayList<String> arrayList;
+
+    public ImageRequest(Context context, ArrayList<String> arrayList) {
+        this.context = context;
+        this.arrayList = arrayList;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.image_list_item, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Glide.with(context).asBitmap().load(arrayList.get(position)).addListener(new RequestListener<Bitmap>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                holder.imageView.setImageBitmap(resource);
+                holder.download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (resource != null) {
+                            File file = new File("/storage/emulated/0/Pictures/Generated/image" + position + ".png");
+                            OutputStream outputStream;
+                            try {
+                                outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                                resource.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                                outputStream.close();
+                                Toast.makeText(context, "Image Saved at: " + file.getPath(), Toast.LENGTH_SHORT).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+                return true;
+            }
+        }).into(holder.imageView);
+    }
+
+    @Override
+    public int getItemCount() {
+        return arrayList.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
+        ImageButton download;
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.list_item_image);
+            download = itemView.findViewById(R.id.list_item_download);
+        }
     }
 }
-
