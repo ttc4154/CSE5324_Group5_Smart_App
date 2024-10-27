@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stablediffusion.MainActivity;
 import com.example.stablediffusion.R;
+import com.example.stablediffusion.appactivity.T2tActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         if (user != null) {
             // User is signed in, go to MainActivity
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            //startActivity(new Intent(LoginActivity.this, T2tActivity.class));
             finish(); // Close LoginActivity
         }
 
@@ -72,7 +74,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        //startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        startActivity(new Intent(LoginActivity.this, T2tActivity.class));
                         finish(); // Close LoginActivity
                     } else {
                         Toast.makeText(LoginActivity.this, "Login Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();

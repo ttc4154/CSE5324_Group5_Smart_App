@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
@@ -16,21 +17,49 @@
 
         <!-- Set LoginActivity as the launcher activity -->
         <activity
-            android:name="com.example.stablediffusion.login.LoginActivity"
+            android:name=".login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.example.stablediffusion.login.RegisterActivity" />
-
+        <activity android:name=".login.RegisterActivity" />
         <activity
+            android:name=".appactivity.Img2ImgActivity"
+            android:exported="true"
+            android:label="Image to Image"
+            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".appactivity.GalleryActivity"
+            android:exported="true"
+            android:label="Gallery"
+            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".appactivity.SettingsActivity"
+            android:exported="true"
+            android:label="Settings"
+            android:theme="@style/AppTheme"/>
+        <!--activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:theme="@style/AppTheme" /-->
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".appactivity.T2tActivity"
+            android:exported="true"
+            android:label="Text to Image"
             android:theme="@style/AppTheme" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.stablediffusion.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

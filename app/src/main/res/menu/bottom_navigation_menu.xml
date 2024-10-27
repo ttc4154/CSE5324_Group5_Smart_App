@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--item
-        android:id="@+id/action_Tt"
-        android:icon="@drawable/ic_tt"
-        android:title="Tt" />
     <item
-        android:id="@+id/action_img2img"
+        android:id="@+id/navigation_t2t"
+        android:icon="@drawable/ic_t2t"
+        android:title="T2T" />
+    <item
+        android:id="@+id/navigation_img2img"
         android:icon="@drawable/ic_image"
-    android:title="Img2Img" />
+        android:title="Img2Img" />
     <item
-        android:id="@+id/action_gallery"
+        android:id="@+id/navigation_gallery"
         android:icon="@drawable/ic_gallery"
-    android:title="Gallery" />
+        android:title="Gallery" />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/navigation_settings"
         android:icon="@drawable/ic_settings"
-    android:title="Settings" /-->
+        android:title="Settings" />
 </menu>
