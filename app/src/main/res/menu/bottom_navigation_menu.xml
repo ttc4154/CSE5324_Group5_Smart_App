@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigation_t2t"
-        android:icon="@drawable/ic_t2t"
-        android:title="T2T" />
+        android:id="@+id/navigation_t2i"
+        android:icon="@drawable/ic_t2i"
+        android:title="Txt2Img" />
     <item
         android:id="@+id/navigation_img2img"
         android:icon="@drawable/ic_image"
@@ -16,4 +16,8 @@
         android:id="@+id/navigation_settings"
         android:icon="@drawable/ic_settings"
         android:title="Settings" />
+    <item
+        android:id="@+id/navigation_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="Logout" />
 </menu>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,10 +15,14 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.example.stablediffusion.R;
+import com.example.stablediffusion.login.LoginActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +58,46 @@ public class Img2ImgActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_img2img);
 
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+                if (itemId == R.id.navigation_img2img) {
+                    // Stay in SettingsActivity
+                    Toast.makeText(Img2ImgActivity.this, "You are already in Img2ImgActivity", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (itemId == R.id.navigation_t2i) {
+                    // Switch to SettingsActivity
+                    Intent intent = new Intent(Img2ImgActivity.this, T2iActivity.class);
+                    startActivity(intent);
+                    finish(); // Optional
+                    return true;
+                } else if (itemId == R.id.navigation_settings) {
+                    // Switch to SettingsActivity
+                    Intent intent = new Intent(Img2ImgActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
+                } else if (itemId == R.id.navigation_gallery) {
+                    // Switch to GalleryActivity
+                    Intent intent = new Intent(Img2ImgActivity.this, GalleryActivity.class);
+                    startActivity(intent);
+                    finish(); // Optional
+                    return true;
+                }else if (itemId == R.id.navigation_logout) {
+                    // Perform logout
+                    FirebaseAuth.getInstance().signOut();
+                    Intent intent = new Intent(Img2ImgActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish(); // Close the current activity
+                    Toast.makeText(Img2ImgActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false; // Unhandled cases
+            }
+        });
         // Initialize UI elements
         selectedImageView = findViewById(R.id.selectedImageView); // Make sure to have this ImageView in your layout
         Button chooseButton = findViewById(R.id.chooseButton); // Button to choose image

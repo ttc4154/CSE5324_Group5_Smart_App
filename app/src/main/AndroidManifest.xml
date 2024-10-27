@@ -47,7 +47,7 @@
             android:theme="@style/AppTheme" /-->
         <activity android:name=".MainActivity" />
         <activity
-            android:name=".appactivity.T2tActivity"
+            android:name=".appactivity.T2iActivity"
             android:exported="true"
             android:label="Text to Image"
             android:theme="@style/AppTheme" />

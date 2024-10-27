@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".T2tActivity">
+    tools:context=".T2iActivity">
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -23,13 +23,6 @@
             android:id="@+id/promptET"/>
 
     </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:layout_gravity="center" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -87,7 +80,7 @@
         android:layout_below="@id/imageCount"
         android:layout_centerHorizontal="true"
         android:id="@+id/generate"
-        android:text="Generate T2t Activity"
+        android:text="Generate"
         android:layout_marginTop="20sp"/>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -103,5 +96,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/bottom_navigation_menu"/>
+        app:menu="@menu/bottom_navigation_menu"
+        app:itemIconTint="@android:color/holo_blue_dark"
+        app:itemTextColor="@color/color_selector"
+        app:labelVisibilityMode="labeled" />
 </RelativeLayout>

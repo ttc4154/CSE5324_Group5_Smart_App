@@ -8,6 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stablediffusion.R;
+import com.example.stablediffusion.appactivity.GalleryActivity;
+import com.example.stablediffusion.appactivity.Img2ImgActivity;
+import com.example.stablediffusion.appactivity.SettingsActivity;
+import com.example.stablediffusion.appactivity.T2iActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -24,8 +28,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
 
-                if (itemId == R.id.navigation_t2t) {
-                    startActivity(new Intent(BaseActivity.this, T2tActivity.class));
+                if (itemId == R.id.navigation_t2i) {
+                    startActivity(new Intent(BaseActivity.this, T2iActivity.class));
                     return true;
                 } else if (itemId == R.id.navigation_img2img) {
                     startActivity(new Intent(BaseActivity.this, Img2ImgActivity.class));
@@ -36,8 +40,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                 } else if (itemId == R.id.navigation_settings) {
                     startActivity(new Intent(BaseActivity.this, SettingsActivity.class));
                     return true;
+                } else {
+                    return false; // Return false for unhandled cases
                 }
-                return false;
             }
         });
     }
