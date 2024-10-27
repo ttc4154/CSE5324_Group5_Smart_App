@@ -11,6 +11,17 @@
         android:text="Gallery Activity"
         android:textSize="24sp"
         android:layout_centerInParent="true"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="4dp" />
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/gallery_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:scaleType="centerCrop" />
     <!-- Bottom Navigation View -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

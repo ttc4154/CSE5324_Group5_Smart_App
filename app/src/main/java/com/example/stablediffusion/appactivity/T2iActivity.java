@@ -1,6 +1,7 @@
 package com.example.stablediffusion.appactivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -155,10 +156,13 @@ public class T2iActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        // Finish the activity and exit the application
-        super.onBackPressed();
-        finishAffinity(); // This will close all activities and exit the app
-        // Alternatively, can use finishAndRemoveTask();
-        // finishAndRemoveTask();
+        new AlertDialog.Builder(this)
+                .setTitle("Exit")
+                .setMessage("Are you sure you want to exit?")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    finishAffinity(); // Close the app
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 }
