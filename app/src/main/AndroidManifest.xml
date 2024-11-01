@@ -6,7 +6,9 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,7 +23,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".login.RegisterActivity" />
@@ -48,6 +49,19 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".appactivity.FullImageActivity" />
         <activity
+            android:name=".SplashActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".appactivity.AboutActivity"
+            android:exported="false" />
+        <activity android:name=".appactivity.ApiKeyActivity"
+            android:exported="false" />
+        <activity
             android:name=".appactivity.T2iActivity"
             android:exported="true"
             android:label="Text to Image"
@@ -62,5 +76,4 @@
             android:resource="@xml/file_paths" />
         </provider>
     </application>
-
 </manifest>

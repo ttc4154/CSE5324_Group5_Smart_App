@@ -8,10 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stablediffusion.R;
-import com.example.stablediffusion.appactivity.GalleryActivity;
-import com.example.stablediffusion.appactivity.Img2ImgActivity;
-import com.example.stablediffusion.appactivity.SettingsActivity;
-import com.example.stablediffusion.appactivity.T2iActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 

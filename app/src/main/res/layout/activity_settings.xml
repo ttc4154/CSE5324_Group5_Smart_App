@@ -3,14 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/settings_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings Activity"
-        android:textSize="24sp"
-        android:layout_centerInParent="true"/>
     <!-- Bottom Navigation View -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -21,4 +13,53 @@
         app:itemIconTint="@android:color/holo_blue_dark"
         app:itemTextColor="@color/color_selector"
         app:labelVisibilityMode="labeled" />
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/setting_api_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="API Key Settings"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:clickable="true"
+            android:focusable="true" />
+        <TextView
+            android:id="@+id/setting_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:clickable="true"
+            android:focusable="true" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Theme"
+            android:textSize="18sp"
+            android:layout_marginTop="20dp"/>
+
+        <RadioGroup
+            android:id="@+id/theme_selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/light_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Light Theme" />
+
+            <RadioButton
+                android:id="@+id/dark_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dark Theme" />
+        </RadioGroup>
+    </LinearLayout>
 </RelativeLayout>
