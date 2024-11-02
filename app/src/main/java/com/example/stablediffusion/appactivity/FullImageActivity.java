@@ -24,4 +24,6 @@ public class FullImageActivity extends AppCompatActivity {
             Glide.with(this).load(imageUri).into(imageView);
         }
     }
+
+    // TODO::Need to add full gallery features like: view, swipe left, right, save, etc.
 }

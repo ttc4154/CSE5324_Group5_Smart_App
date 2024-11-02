@@ -174,4 +174,5 @@ public class Img2ImgActivity extends AppCompatActivity {
             }
         }
     }
+    // TODO::Add the ability to mask the image, aka image processing
 }
