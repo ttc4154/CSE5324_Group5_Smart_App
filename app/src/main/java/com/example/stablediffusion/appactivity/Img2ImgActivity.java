@@ -23,6 +23,10 @@ import com.example.stablediffusion.R;
 import com.example.stablediffusion.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +40,7 @@ public class Img2ImgActivity extends AppCompatActivity {
     private Uri imageUri;
     private ImageView selectedImageView; // ImageView to display the selected image
     private ProgressDialog progressDialog;
+    private StorageReference storageReference;
 
     // Activity Result Launcher for camera permission request
     private final ActivityResultLauncher<String> cameraPermissionLauncher = registerForActivityResult(
@@ -57,6 +62,28 @@ public class Img2ImgActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_img2img);
+
+        // Initialize Firebase Storage reference
+        storageReference = FirebaseStorage.getInstance().getReference();
+        selectedImageView = findViewById(R.id.selectedImageView);
+        Button chooseButton = findViewById(R.id.chooseButton);
+        Button captureButton = findViewById(R.id.captureButton);
+        Button uploadButton = findViewById(R.id.uploadButton); // Initialize upload button
+
+        progressDialog = new ProgressDialog(Img2ImgActivity.this);
+        progressDialog.setMessage("Uploading...");
+
+        chooseButton.setOnClickListener(v -> openGallery());
+        captureButton.setOnClickListener(v -> requestCameraPermission());
+
+        // Set OnClickListener for the upload button
+        uploadButton.setOnClickListener(v -> {
+            if (imageUri != null) {
+                uploadImageToFirebase(imageUri);
+            } else {
+                Toast.makeText(Img2ImgActivity.this, "No image selected to upload.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
@@ -100,12 +127,12 @@ public class Img2ImgActivity extends AppCompatActivity {
         });
         // Initialize UI elements
         selectedImageView = findViewById(R.id.selectedImageView); // Make sure to have this ImageView in your layout
-        Button chooseButton = findViewById(R.id.chooseButton); // Button to choose image
-        Button captureButton = findViewById(R.id.captureButton); // Button to capture image
+        //Button chooseButtonLocal = findViewById(R.id.chooseButton); // Button to choose image
+        //Button captureButton = findViewById(R.id.captureButton); // Button to capture image
 
         // ProgressDialog initialization
-        progressDialog = new ProgressDialog(Img2ImgActivity.this);
-        progressDialog.setMessage("Generating...");
+        //progressDialog = new ProgressDialog(Img2ImgActivity.this);
+        //progressDialog.setMessage("Generating...");
 
         // Set OnClickListener for the choose button
         chooseButton.setOnClickListener(new View.OnClickListener() {
@@ -175,4 +202,36 @@ public class Img2ImgActivity extends AppCompatActivity {
         }
     }
     // TODO::Add the ability to mask the image, aka image processing
+    private void uploadImageToFirebase(Uri imageUri) {
+        if (imageUri == null) {
+            Toast.makeText(Img2ImgActivity.this, "No image selected to upload.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressDialog.show();
+
+        // Get the current user
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid(); // Get the current user's ID
+            // Create a unique filename
+            String fileName = "images/" + userId + "/" + System.currentTimeMillis() + ".jpg";
+
+            StorageReference imageRef = storageReference.child(fileName);
+
+            // Upload image to Firebase Storage
+            UploadTask uploadTask = imageRef.putFile(imageUri);
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                progressDialog.dismiss();
+                Toast.makeText(Img2ImgActivity.this, "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener(e -> {
+                progressDialog.dismiss();
+                Toast.makeText(Img2ImgActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            progressDialog.dismiss();
+            Toast.makeText(Img2ImgActivity.this, "User not logged in.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

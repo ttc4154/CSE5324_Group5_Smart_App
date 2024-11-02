@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.example.stablediffusion.appactivity.BaseActivity;
 import com.example.stablediffusion.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -29,6 +30,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Call the base class's onCreate
         mAuth = FirebaseAuth.getInstance();
+        FirebaseApp.initializeApp(this);
         FirebaseUser user = mAuth.getCurrentUser();
 
         // Check if user is logged in

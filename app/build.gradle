@@ -51,6 +51,7 @@ dependencies {
     implementation libs.androidx.ui.graphics
     implementation libs.androidx.ui.tooling.preview
     implementation libs.androidx.material3
+    implementation libs.firebase.storage
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
@@ -74,7 +75,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:22.0.0' // Check for the latest version
     implementation platform('com.google.firebase:firebase-bom:33.5.1')
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-auth:21.0.1' // or the latest version
     implementation 'com.google.firebase:firebase-database:20.0.3' // if using Realtime Database
 // OR
     implementation 'com.google.firebase:firebase-firestore:24.0.1' // if using Firestore
