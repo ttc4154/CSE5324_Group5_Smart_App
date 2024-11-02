@@ -6,37 +6,44 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.stablediffusion.R;
 import com.example.stablediffusion.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Img2ImgActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
     private static final int CAPTURE_IMAGE = 2;
-
+    private static final int PICK_IMAGE_FROM_CLOUD = 3;
+    private ImageAdapterForCloud imageAdapter;
+    private List<ImageModelForCloud> imageList = new ArrayList<>();
     private Uri imageUri;
     private ImageView selectedImageView; // ImageView to display the selected image
     private ProgressDialog progressDialog;
@@ -45,15 +52,12 @@ public class Img2ImgActivity extends AppCompatActivity {
     // Activity Result Launcher for camera permission request
     private final ActivityResultLauncher<String> cameraPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
-                @Override
-                public void onActivityResult(Boolean result) {
-                    if (result) {
-                        // Permission granted, open the camera
-                        openCamera();
-                    } else {
-                        Toast.makeText(Img2ImgActivity.this, "Camera permission is required to take pictures.", Toast.LENGTH_SHORT).show();
-                    }
+            result -> {
+                if (result) {
+                    // Permission granted, open the camera
+                    openCamera();
+                } else {
+                    Toast.makeText(Img2ImgActivity.this, "Camera permission is required to take pictures.", Toast.LENGTH_SHORT).show();
                 }
             }
     );
@@ -63,17 +67,20 @@ public class Img2ImgActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_img2img);
 
-        // Initialize Firebase Storage reference
+        imageAdapter = new ImageAdapterForCloud(imageList, Img2ImgActivity.this, this::onImageClick);
+
         storageReference = FirebaseStorage.getInstance().getReference();
+
         selectedImageView = findViewById(R.id.selectedImageView);
-        Button chooseButton = findViewById(R.id.chooseButton);
+        Button chooseButtonLocal = findViewById(R.id.chooseButtonLocal);
+        Button chooseButtonCloud = findViewById(R.id.chooseButtonCloud);
         Button captureButton = findViewById(R.id.captureButton);
         Button uploadButton = findViewById(R.id.uploadButton); // Initialize upload button
 
         progressDialog = new ProgressDialog(Img2ImgActivity.this);
         progressDialog.setMessage("Uploading...");
 
-        chooseButton.setOnClickListener(v -> openGallery());
+        chooseButtonLocal.setOnClickListener(v -> openGallery());
         captureButton.setOnClickListener(v -> requestCameraPermission());
 
         // Set OnClickListener for the upload button
@@ -126,36 +133,29 @@ public class Img2ImgActivity extends AppCompatActivity {
             }
         });
         // Initialize UI elements
-        selectedImageView = findViewById(R.id.selectedImageView); // Make sure to have this ImageView in your layout
-        //Button chooseButtonLocal = findViewById(R.id.chooseButton); // Button to choose image
-        //Button captureButton = findViewById(R.id.captureButton); // Button to capture image
-
-        // ProgressDialog initialization
-        //progressDialog = new ProgressDialog(Img2ImgActivity.this);
-        //progressDialog.setMessage("Generating...");
+        selectedImageView = findViewById(R.id.selectedImageView);
 
         // Set OnClickListener for the choose button
-        chooseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
-            }
-        });
+        chooseButtonLocal.setOnClickListener(v -> openGallery());
+
+        // Set OnClickListener for the choose button
+        chooseButtonCloud.setOnClickListener(v -> fetchImagesFromCloud());
 
         // Set OnClickListener for the capture button
-        captureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestCameraPermission(); // Request permission before opening the camera
-            }
+        captureButton.setOnClickListener(v -> {
+            requestCameraPermission(); // Request permission before opening the camera
         });
     }
-
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE);
     }
 
+    private void fetchImagesFromCloud() {
+        // Launch GalleryActivity for result
+        Intent intent = new Intent(this, ImageGalleryForCloud.class);
+        startActivityForResult(intent, PICK_IMAGE_FROM_CLOUD);
+    }
     private void requestCameraPermission() {
         cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
     }
@@ -181,7 +181,6 @@ public class Img2ImgActivity extends AppCompatActivity {
             }
         }
     }
-
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -189,15 +188,49 @@ public class Img2ImgActivity extends AppCompatActivity {
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
+    private void onImageClick(Uri imageUri) {
+        Intent intent = new Intent(Img2ImgActivity.this, FullImageActivity.class);
+        intent.putExtra("imageUri", imageUri.toString());
+        startActivity(intent);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("Img2ImgActivity", "Received Intent Data: " + data);
+
+        Log.d("PICK_IMAGE_FROM_CLOUD", "PICK_IMAGE_FROM_CLOUD: " + PICK_IMAGE_FROM_CLOUD);
+
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_IMAGE && data != null) {
                 imageUri = data.getData();
-                selectedImageView.setImageURI(imageUri); // Display the selected image
-            } else if (requestCode == CAPTURE_IMAGE) {
+                selectedImageView.setImageURI(imageUri); // Display the selected image from either Local or Cloud storage
+                Toast.makeText(this, "Operation PICK_IMAGE", Toast.LENGTH_SHORT).show();
+                return; // Exit after handling PICK_IMAGE
+            }
+            if (requestCode == PICK_IMAGE_FROM_CLOUD && data != null && data.hasExtra("selectedImageUri")) {
+                String imageUriString = data.getStringExtra("selectedImageUri");
+                imageUri = Uri.parse(imageUriString);
+                Log.d("ImageGalleryForCloud", "Selected image URI: " + imageUri.toString());
+                //selectedImageView.setImageURI(imageUri);
+                if (imageUri != null) {
+                    Glide.with(this)
+                            .load(imageUri)
+                            .into(selectedImageView);
+                } else {
+                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                }
+
+                Toast.makeText(this, "Operation PICK_IMAGE_FROM_CLOUD", Toast.LENGTH_SHORT).show();
+                // Exit after handling PICK_IMAGE
+            }
+            else if (requestCode == CAPTURE_IMAGE) {
                 selectedImageView.setImageURI(imageUri); // Display the captured image
+                Toast.makeText(this, "Operation CAPTURE_IMAGE", Toast.LENGTH_SHORT).show();
+                // Exit after handling PICK_IMAGE
+            }
+            else {
+                Toast.makeText(this, "Operation canceled", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -233,5 +266,4 @@ public class Img2ImgActivity extends AppCompatActivity {
             Toast.makeText(Img2ImgActivity.this, "User not logged in.", Toast.LENGTH_SHORT).show();
         }
     }
-
 }

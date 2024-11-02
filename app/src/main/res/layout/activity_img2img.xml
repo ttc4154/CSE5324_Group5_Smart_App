@@ -6,57 +6,64 @@
     android:orientation="vertical">
 
     <!-- Capture Button -->
+    <!-- Capture Button -->
     <Button
         android:id="@+id/captureButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/selectedImageView"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="2dp"
         android:text="Camera" />
 
     <!-- Gallery Button positioned to the right of Capture Button -->
     <Button
-        android:id="@+id/chooseButton"
+        android:id="@+id/chooseButtonLocal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/captureButton"
-        android:layout_below="@id/selectedImageView"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="2dp"
         android:layout_marginStart="16dp"
         android:text="From Gallery" />
 
+    <!-- Cloud Button positioned to the right of Gallery Button -->
     <Button
-        android:id="@+id/chooseFromCloudButton"
+        android:id="@+id/chooseButtonCloud"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/chooseButton"
-        android:layout_below="@id/selectedImageView"
-        android:layout_marginTop="16dp"
+        android:layout_toEndOf="@id/chooseButtonLocal"
+        android:layout_marginTop="2dp"
         android:layout_marginStart="16dp"
         android:text="From Cloud" />
 
-   <Button
+    <!-- Upload Button positioned below the other buttons -->
+    <Button
         android:id="@+id/uploadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-	    android:layout_below="@id/selectedImageView"
-        android:layout_marginTop="64dp"
+        android:layout_below="@id/captureButton"
+        android:layout_marginTop="0dp"
         android:text="Upload Image" />
 
+    <!-- ImageView positioned below the Upload Button -->
     <ImageView
         android:id="@+id/selectedImageView"
-        android:layout_width="match_parent"
+        android:layout_width="600dp"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true" />
-    <!-- Bottom Navigation View -->
+        android:layout_below="@id/uploadButton"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="0dp"
+        android:padding="8dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter" />
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation_menu"
-        app:itemIconTint="@android:color/holo_blue_dark"
+        app:itemIconTint="@color/colorPrimary"
         app:itemTextColor="@color/color_selector"
         app:labelVisibilityMode="labeled" />
 </RelativeLayout>

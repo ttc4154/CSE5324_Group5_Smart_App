@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true"> <!-- Ensure cleartext traffic is not permitted -->
+        <domain includeSubdomains="true">cse5324-group5</domain> <!-- Allow Firebase -->
+        <domain includeSubdomains="true">cse5324-group5.firebasestorage.app</domain> <!-- Allow Firebase Storage -->
+        <domain includeSubdomains="true">*.googleapis.com</domain> <!-- Allow Google APIs -->
+    </domain-config>
+</network-security-config>
