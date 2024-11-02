@@ -7,7 +7,7 @@
     <item
         android:id="@+id/navigation_img2img"
         android:icon="@drawable/ic_image"
-        android:title="Img2Img" />
+        android:title="Inpaint" />
     <item
         android:id="@+id/navigation_gallery"
         android:icon="@drawable/ic_gallery"

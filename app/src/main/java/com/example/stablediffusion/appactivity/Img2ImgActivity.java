@@ -2,10 +2,14 @@ package com.example.stablediffusion.appactivity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,11 +21,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.stablediffusion.R;
+import com.example.stablediffusion.api.InpaintRequest;
+import com.example.stablediffusion.api.InpaintResponse;
 import com.example.stablediffusion.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,13 +36,25 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import androidx.recyclerview.widget.RecyclerView;
 
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class Img2ImgActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
@@ -48,6 +66,12 @@ public class Img2ImgActivity extends AppCompatActivity {
     private ImageView selectedImageView; // ImageView to display the selected image
     private ProgressDialog progressDialog;
     private StorageReference storageReference;
+
+    private String maskImageUrl;
+    private String prompt;
+    private Button generateButton;
+    private String initImageUrl;
+    private RecyclerView recyclerView;
 
     // Activity Result Launcher for camera permission request
     private final ActivityResultLauncher<String> cameraPermissionLauncher = registerForActivityResult(
@@ -130,6 +154,31 @@ public class Img2ImgActivity extends AppCompatActivity {
                     return true;
                 }
                 return false; // Unhandled cases
+            }
+        });
+        initImageUrl = "https://firebasestorage.googleapis.com/v0/b/cse5324-group5.firebasestorage.app/o/images%2FnsDuY1wGz3O3ZQ1ae9its7rOLyk2%2Fdog_on_the_bench.png?alt=media&token=c72bd84f-ef83-4caa-a801-bdc6671767a5";
+        maskImageUrl = "https://firebasestorage.googleapis.com/v0/b/cse5324-group5.firebasestorage.app/o/images%2FnsDuY1wGz3O3ZQ1ae9its7rOLyk2%2Fdot_on_the_bench_mask.png?alt=media&token=eca71884-2b0b-45eb-961f-663d9da4b505";
+        prompt = "a cat sitting on the bench";
+        generateButton = findViewById(R.id.generateInpaint);
+
+        // Set OnClickListener for the generate button
+        generateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Validate prompt text
+                progressDialog.show();
+                progressDialog.setMessage("Generate...Inpaint");
+                // Call to generate images
+                new InpaintResponse(Img2ImgActivity.this).inpaint(
+                        initImageUrl,
+                        maskImageUrl,
+                        prompt,
+                        arrayList -> {
+                            progressDialog.dismiss();
+                            InpaintRequest request = new InpaintRequest(Img2ImgActivity.this, arrayList);
+                            recyclerView.setAdapter(request);
+                        }
+                );
             }
         });
         // Initialize UI elements

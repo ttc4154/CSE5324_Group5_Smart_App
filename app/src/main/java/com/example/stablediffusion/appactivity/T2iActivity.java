@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -20,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stablediffusion.OnLoaded;
 import com.example.stablediffusion.R;
 import com.example.stablediffusion.api.ImageRequest; // Import ImageRequest model
 import com.example.stablediffusion.api.ImageResponse; // Import ImageResponse model
@@ -30,7 +28,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class T2iActivity extends AppCompatActivity {
@@ -48,14 +45,11 @@ public class T2iActivity extends AppCompatActivity {
     // Activity Result Launcher for permission request
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
-                @Override
-                public void onActivityResult(Boolean result) {
-                    if (result) {
-                        Toast.makeText(T2iActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(T2iActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
-                    }
+            result -> {
+                if (result) {
+                    Toast.makeText(T2iActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(T2iActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
                 }
             }
     );
@@ -140,13 +134,10 @@ public class T2iActivity extends AppCompatActivity {
                                 width.getProgress(),
                                 height.getProgress(),
                                 imageCount.getProgress(),
-                                new OnLoaded() {
-                                    @Override
-                                    public void loaded(ArrayList<String> arrayList) {
-                                        progressDialog.dismiss();
-                                        ImageRequest request = new ImageRequest(T2iActivity.this, arrayList);
-                                        recyclerView.setAdapter(request);
-                                    }
+                                arrayList -> {
+                                    progressDialog.dismiss();
+                                    ImageRequest request = new ImageRequest(T2iActivity.this, arrayList);
+                                    recyclerView.setAdapter(request);
                                 }
                         );
                     }

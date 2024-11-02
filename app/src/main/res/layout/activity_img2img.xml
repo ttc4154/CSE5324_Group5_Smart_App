@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Capture Button -->
-    <!-- Capture Button -->
     <Button
         android:id="@+id/captureButton"
         android:layout_width="wrap_content"
@@ -43,6 +41,15 @@
         android:layout_below="@id/captureButton"
         android:layout_marginTop="0dp"
         android:text="Upload Image" />
+
+    <Button
+        android:id="@+id/generateInpaint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/captureButton"
+        android:layout_marginTop="0dp"
+        android:layout_marginStart="200dp"
+        android:text="Generate Inpaint" />
 
     <!-- ImageView positioned below the Upload Button -->
     <ImageView
