@@ -5,64 +5,181 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/captureButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="2dp"
-        android:text="Camera" />
-
-    <!-- Gallery Button positioned to the right of Capture Button -->
-    <Button
-        android:id="@+id/chooseButtonLocal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/captureButton"
-        android:layout_marginTop="2dp"
-        android:layout_marginStart="16dp"
-        android:text="From Gallery" />
-
-    <!-- Cloud Button positioned to the right of Gallery Button -->
-    <Button
-        android:id="@+id/chooseButtonCloud"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/chooseButtonLocal"
-        android:layout_marginTop="2dp"
-        android:layout_marginStart="16dp"
-        android:text="From Cloud" />
-
-    <!-- Upload Button positioned below the other buttons -->
-    <Button
+    <!--Button
         android:id="@+id/uploadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/captureButton"
         android:layout_marginTop="0dp"
-        android:text="Upload Image" />
+        android:text="Upload Image" /-->
+
+    <!-- Camera Button -->
+
+    <!-- Gallery Button positioned to the right of Camera Button -->
+
+    <!-- Cloud Button positioned to the right of Gallery Button -->
+
+    <ImageButton
+        android:id="@+id/captureButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="2dp"
+        android:background="@null"
+        android:contentDescription="Capture Image"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_camera" />
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="From Camera"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
+        android:textColor="@android:color/black"
+        android:layout_toEndOf="@id/captureButton"
+        android:layout_marginStart="0dp"
+        android:padding="4dp"/>
+
+    <ImageButton
+        android:id="@+id/chooseButtonLocal"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@id/text1"
+        android:background="@null"
+        android:contentDescription="Choose from Gallery"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_gallery" />
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="From Gallery"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
+        android:textColor="@android:color/black"
+        android:layout_toEndOf="@id/chooseButtonLocal"
+        android:layout_marginStart="0dp"
+        android:padding="4dp"/>
+
+    <ImageButton
+        android:id="@+id/chooseButtonCloud"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="4dp"
+        android:layout_toEndOf="@id/text2"
+        android:background="@null"
+        android:contentDescription="Choose from Cloud"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_cloud" />
+
+    <TextView
+        android:id="@+id/text3"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="FromCloud"
+        android:background="@android:color/transparent"
+        android:textColor="@android:color/black"
+        android:layout_toEndOf="@id/chooseButtonCloud"
+        android:padding="4dp"/>
+
+
+
+    <!-- ImageView positioned below the Upload Button -->
+    <!--ImageView
+        android:id="@+id/selectedImageView"
+        android:layout_width="600dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/generateInpaint"
+        android:layout_margin="0dp"
+        android:layout_marginTop="600dp"
+        android:layout_marginBottom="0dp"
+        android:adjustViewBounds="true"
+        android:padding="8dp"
+        android:scaleType="fitCenter" /-->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chooseButtonLocal"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5sp"
+        android:hint="Prompt Text"
+        android:id="@+id/inpaintPromptLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:id="@+id/inpaintPromptET"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- ImageView for displaying the selected image -->
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/selectedImageView"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_below="@id/generateInpaint"
+        android:padding="8dp"
+        android:layout_above="@id/rotateButton"/>
+
+    <!-- Custom Drawing View -->
+    <com.example.stablediffusion.appactivity.DrawingView
+        android:id="@+id/drawingView"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_below="@id/generateInpaint"
+        android:background="@android:color/transparent"/>
 
     <Button
         android:id="@+id/generateInpaint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/captureButton"
+        android:layout_below="@id/inpaintPromptLayout"
         android:layout_marginTop="0dp"
-        android:layout_marginStart="200dp"
-        android:text="Generate Inpaint" />
+        android:layout_marginStart="16dp"
+        android:text="Imagine" />
 
-    <!-- ImageView positioned below the Upload Button -->
-    <ImageView
-        android:id="@+id/selectedImageView"
-        android:layout_width="600dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/uploadButton"
-        android:layout_centerHorizontal="true"
+    <Button
+        android:textSize="10sp"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:id="@+id/cropButton"
+        android:layout_marginLeft="16dp"
+        android:layout_above="@id/bottom_navigation"
+        android:text="Crop" />
+
+    <!-- Rotate Button -->
+    <Button
+        android:textSize="10sp"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:id="@+id/rotateButton"
+        android:layout_toEndOf="@id/cropButton"
         android:layout_margin="0dp"
-        android:padding="8dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter" />
+        android:layout_above="@id/bottom_navigation"
+        android:text="Rotate" />
 
+    <!-- Masking Button -->
+    <Button
+        android:id="@+id/maskButton"
+        android:textSize="10sp"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_toEndOf="@id/rotateButton"
+        android:layout_margin="0dp"
+        android:layout_above="@id/bottom_navigation"
+        android:text="Mask" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
