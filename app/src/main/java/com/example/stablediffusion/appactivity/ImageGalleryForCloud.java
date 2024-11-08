@@ -50,14 +50,14 @@ public class ImageGalleryForCloud extends AppCompatActivity {
     }
 
     private void fetchImagesFromCloud() {
-        Log.d("GalleryActivity", "Fetching images from Firebase Storage.");
+        Log.d("GalleryActivityForCloud", "Fetching images from Firebase Storage.");
 
         // Get the current user
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         StorageReference userImagesRef = null;
         if (user != null) {
             String userId = user.getUid();
-            userImagesRef = storageReference.child("images/" + userId);
+            userImagesRef = storageReference.child("user_images/" + userId);
         }
 
         // Attempt to list all items in the storage reference
@@ -65,7 +65,7 @@ public class ImageGalleryForCloud extends AppCompatActivity {
         userImagesRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
             public void onSuccess(ListResult listResult) {
-                Log.d("GalleryActivity", "Successfully fetched list of images.");
+                Log.d("GalleryActivityForCloud", "Successfully fetched list of images.");
                 imageList.clear(); // Clear previous images
 
                 for (StorageReference item : listResult.getItems()) {
@@ -89,7 +89,7 @@ public class ImageGalleryForCloud extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(ImageGalleryForCloud.this, "Failed to list images", Toast.LENGTH_SHORT).show();
-                Log.e("GalleryActivity", "Failed to list images: " + e.getMessage());
+                Log.e("GalleryActivityForCloud", "Failed to list images: " + e.getMessage());
             }
         });
     }

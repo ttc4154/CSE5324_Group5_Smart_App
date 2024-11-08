@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stablediffusion.R;
 import com.example.stablediffusion.login.LoginActivity;
+import com.example.stablediffusion.login.UserProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -43,35 +44,7 @@ public class GalleryActivity extends AppCompatActivity {
         checkPermissionAndLoadImages();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId == R.id.navigation_img2img) {
-                    startActivity(new Intent(GalleryActivity.this, Img2ImgActivity.class));
-                    finish();
-                    return true;
-                } else if (itemId == R.id.navigation_t2i) {
-                    startActivity(new Intent(GalleryActivity.this, T2iActivity.class));
-                    finish();
-                    return true;
-                } else if (itemId == R.id.navigation_settings) {
-                    startActivity(new Intent(GalleryActivity.this, SettingsActivity.class));
-                    finish();
-                    return true;
-                } else if (itemId == R.id.navigation_gallery) {
-                    Toast.makeText(GalleryActivity.this, "You are already in GalleryActivity", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (itemId == R.id.navigation_logout) {
-                    FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(GalleryActivity.this, LoginActivity.class));
-                    finish();
-                    Toast.makeText(GalleryActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false;
-            }
-        });
+        bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
 
     private void checkPermissionAndLoadImages() {
@@ -158,5 +131,27 @@ public class GalleryActivity extends AppCompatActivity {
         Intent intent = new Intent(GalleryActivity.this, FullImageActivity.class);
         intent.putExtra("imageUri", imageUri.toString());
         startActivity(intent);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_gallery); // Set the default selection
+    }
+    private boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        Class<?> activityClass = null;
+
+        if (itemId == R.id.navigation_img2img) activityClass = Img2ImgActivity.class;
+        else if (itemId == R.id.navigation_t2i) activityClass = T2iActivity.class;
+        else if (itemId == R.id.navigation_settings)  activityClass = SettingsActivity.class;
+        else if (itemId == R.id.navigation_gallery) return true;
+        else if (itemId == R.id.navigation_user_profile) activityClass = UserProfileActivity.class;
+
+        if (activityClass != null) {
+            startActivity(new Intent(this, activityClass));
+            finish();
+        }
+        return true;
     }
 }

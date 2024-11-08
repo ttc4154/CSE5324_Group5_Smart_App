@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation_menu"
-        app:itemIconTint="@android:color/holo_blue_dark"
+        app:itemIconTint="@color/colorPrimary"
         app:itemTextColor="@color/color_selector"
         app:labelVisibilityMode="labeled" />
 </RelativeLayout>

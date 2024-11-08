@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -30,6 +31,7 @@ import com.example.stablediffusion.R;
 import com.example.stablediffusion.api.InpaintRequest;
 import com.example.stablediffusion.api.InpaintResponse;
 import com.example.stablediffusion.login.LoginActivity;
+import com.example.stablediffusion.login.UserProfileActivity;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -94,18 +96,18 @@ public class Img2ImgActivity extends AppCompatActivity {
         Button rotateButton = findViewById(R.id.rotateButton);
         Button maskButton = findViewById(R.id.maskButton);
         // Set the image URI to the PhotoView
-        setImageUri(imageUri);
-
+        //setImageUri(imageUri);
         // Set up button click listeners
         cropButton.setOnClickListener(v -> cropImage());
         rotateButton.setOnClickListener(v -> rotateImage());
-        maskButton.setOnClickListener(v -> applyMask());
+        //maskButton.setOnClickListener(v -> applyMask());
 
         imageAdapter = new ImageAdapterForCloud(imageList, Img2ImgActivity.this, this::onImageClick);
 
         storageReference = FirebaseStorage.getInstance().getReference();
 
         selectedImageView = findViewById(R.id.selectedImageView);
+        //drawingView.setOnDrawingCompleteListener(this); // Set the listener
         ImageButton chooseButtonLocal = findViewById(R.id.chooseButtonLocal);
         ImageButton chooseButtonCloud = findViewById(R.id.chooseButtonCloud);
         ImageButton captureButton = findViewById(R.id.captureButton);
@@ -127,45 +129,8 @@ public class Img2ImgActivity extends AppCompatActivity {
         });*/
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId == R.id.navigation_img2img) {
-                    // Stay in SettingsActivity
-                    Toast.makeText(Img2ImgActivity.this, "You are already in Img2ImgActivity", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (itemId == R.id.navigation_t2i) {
-                    // Switch to SettingsActivity
-                    Intent intent = new Intent(Img2ImgActivity.this, T2iActivity.class);
-                    startActivity(intent);
-                    finish(); // Optional
-                    return true;
-                } else if (itemId == R.id.navigation_settings) {
-                    // Switch to SettingsActivity
-                    Intent intent = new Intent(Img2ImgActivity.this, SettingsActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return true;
-                } else if (itemId == R.id.navigation_gallery) {
-                    // Switch to GalleryActivity
-                    Intent intent = new Intent(Img2ImgActivity.this, GalleryActivity.class);
-                    startActivity(intent);
-                    finish(); // Optional
-                    return true;
-                }else if (itemId == R.id.navigation_logout) {
-                    // Perform logout
-                    FirebaseAuth.getInstance().signOut();
-                    Intent intent = new Intent(Img2ImgActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish(); // Close the current activity
-                    Toast.makeText(Img2ImgActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false; // Unhandled cases
-            }
-        });
         //initImageUrl = "https://firebasestorage.googleapis.com/v0/b/cse5324-group5.firebasestorage.app/o/images%2FnsDuY1wGz3O3ZQ1ae9its7rOLyk2%2Fdog_on_the_bench.png?alt=media&token=c72bd84f-ef83-4caa-a801-bdc6671767a5";
         maskImageUrl = "https://firebasestorage.googleapis.com/v0/b/cse5324-group5.firebasestorage.app/o/images%2FnsDuY1wGz3O3ZQ1ae9its7rOLyk2%2Fdot_on_the_bench_mask.png?alt=media&token=eca71884-2b0b-45eb-961f-663d9da4b505";
         // Initialize UI elements
@@ -262,8 +227,6 @@ public class Img2ImgActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("Img2ImgActivity", "Received Intent Data: " + data);
 
-        Log.d("PICK_IMAGE_FROM_CLOUD", "PICK_IMAGE_FROM_CLOUD: " + PICK_IMAGE_FROM_CLOUD);
-
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_IMAGE_FROM_LOCAL && data != null) {
                 imageUri = data.getData();
@@ -295,6 +258,7 @@ public class Img2ImgActivity extends AppCompatActivity {
                 String imageUriString = data.getStringExtra("selectedImageUri");
                 imageUri = Uri.parse(imageUriString);
                 Log.d("ImageGalleryForCloud", "Selected image URI: " + imageUri.toString());
+                setImageUri(imageUri);
                 selectedImageView.setImageURI(imageUri);
                 initImageUrl = imageUri.toString();
                 Log.d("ImageGalleryForCloud", "initImageUrl: " + initImageUrl);
@@ -368,7 +332,7 @@ public class Img2ImgActivity extends AppCompatActivity {
         if (user != null) {
             String userId = user.getUid(); // Get the current user's ID
             // Create a unique filename
-            String fileName = "images/" + userId + "/" + System.currentTimeMillis() + ".jpg";
+            String fileName = "user_images/" + userId + "/" + System.currentTimeMillis() + ".jpg";
             StorageReference imageRef = storageReference.child(fileName);
 
             /*// Upload image to Firebase Storage
@@ -405,6 +369,29 @@ public class Img2ImgActivity extends AppCompatActivity {
             progressDialog.dismiss();
             Toast.makeText(Img2ImgActivity.this, "User not logged in.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // Method to update the image after drawing is completed
+    public void updateImageAfterDrawing() {
+        // Get the bitmap from the drawing view
+        Bitmap maskBitmap = drawingView.getDrawingBitmap(); // Assuming this method exists
+        if (maskBitmap != null) {
+            // Update the selected image view with the new masked image
+            Bitmap selectedBitmap = ((BitmapDrawable) selectedImageView.getDrawable()).getBitmap();
+            Bitmap combinedBitmap = combineBitmaps(selectedBitmap, maskBitmap); // Combine the original image with the mask
+            selectedImageView.setImageBitmap(combinedBitmap);
+        } else {
+            Toast.makeText(this, "Failed to retrieve the mask bitmap.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Assuming a method that combines two bitmaps (original and mask)
+    private Bitmap combineBitmaps(Bitmap original, Bitmap mask) {
+        Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), original.getConfig());
+        Canvas canvas = new Canvas(result);
+        canvas.drawBitmap(original, 0, 0, null);
+        canvas.drawBitmap(mask, 0, 0, null);
+        return result;
     }
 
     private void setImageUri(Uri imageUri) {
@@ -444,5 +431,27 @@ public class Img2ImgActivity extends AppCompatActivity {
                 .withAspectRatio(1, 1)
                 .withMaxResultSize(800, 800)
                 .start(this);*/
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_img2img); // Set the default selection
+    }
+    private boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        Class<?> activityClass = null;
+
+        if (itemId == R.id.navigation_img2img) return true;
+        else if (itemId == R.id.navigation_t2i) activityClass = T2iActivity.class;
+        else if (itemId == R.id.navigation_settings) activityClass = SettingsActivity.class;
+        else if (itemId == R.id.navigation_gallery) activityClass = GalleryActivity.class;
+        else if (itemId == R.id.navigation_user_profile) activityClass = UserProfileActivity.class;
+
+        if (activityClass != null) {
+            startActivity(new Intent(this, activityClass));
+            finish();
+        }
+        return true;
     }
 }

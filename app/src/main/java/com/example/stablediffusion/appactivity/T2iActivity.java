@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.stablediffusion.R;
 import com.example.stablediffusion.api.ImageRequest; // Import ImageRequest model
 import com.example.stablediffusion.api.ImageResponse; // Import ImageResponse model
-import com.example.stablediffusion.login.LoginActivity;
+import com.example.stablediffusion.login.UserProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -60,45 +60,8 @@ public class T2iActivity extends AppCompatActivity {
         setContentView(R.layout.activity_t2i);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId == R.id.navigation_img2img) {
-                    // Switch to Img2ImgActivity
-                    Intent intent = new Intent(T2iActivity.this, Img2ImgActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return true;
-                } else if (itemId == R.id.navigation_t2i) {
-                    // Stay in T2iActivity
-                    Toast.makeText(T2iActivity.this, "You are already in T2i", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (itemId == R.id.navigation_settings) {
-                    // Switch to SettingsActivity
-                    Intent intent = new Intent(T2iActivity.this, SettingsActivity.class);
-                    startActivity(intent);
-                    finish(); // Optional
-                    return true;
-                } else if (itemId == R.id.navigation_gallery) {
-                    // Switch to GalleryActivity
-                    Intent intent = new Intent(T2iActivity.this, GalleryActivity.class);
-                    startActivity(intent);
-                    finish(); // Optional
-                    return true;
-                }else if (itemId == R.id.navigation_logout) {
-                    // Perform logout
-                    FirebaseAuth.getInstance().signOut();
-                    Intent intent = new Intent(T2iActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish(); // Close the current activity
-                    Toast.makeText(T2iActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false; // Unhandled cases
-            }
-        });
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -155,5 +118,21 @@ public class T2iActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
+    }
+    private boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        Class<?> activityClass = null;
+
+        if (itemId == R.id.navigation_img2img) activityClass = Img2ImgActivity.class;
+        else if (itemId == R.id.navigation_t2i) return true;
+        else if (itemId == R.id.navigation_settings) activityClass = SettingsActivity.class;
+        else if (itemId == R.id.navigation_gallery) activityClass = GalleryActivity.class;
+        else if (itemId == R.id.navigation_user_profile) activityClass = UserProfileActivity.class;
+
+        if (activityClass != null) {
+            startActivity(new Intent(this, activityClass));
+            finish();
+        }
+        return true;
     }
 }

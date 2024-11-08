@@ -6,105 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20sp"
-        android:layout_marginEnd="20sp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60sp"
-        android:hint="Prompt Text"
-        android:id="@+id/promptLayout">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:id="@+id/promptET"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:layout_gravity="center" />
-
     <TextView
+        android:id="@+id/gallery_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Width"
-        android:layout_marginStart="10sp"
-        android:layout_marginTop="10sp"
-        android:layout_below="@id/promptLayout"
-        android:id="@+id/widthTV"/>
-
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="1024"
-        android:progress="512"
-        android:layout_below="@id/widthTV"
-        android:id="@+id/width"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Height"
-        android:layout_below="@id/width"
-        android:layout_marginStart="10sp"
-        android:id="@+id/heightTV"/>
-
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/heightTV"
-        android:max="1024"
-        android:progress="512"
-        android:id="@+id/height"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10sp"
-        android:layout_below="@id/height"
-        android:text="Number of Images"
-        android:id="@+id/imageCountTV"/>
-
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/imageCountTV"
-        android:id="@+id/imageCount"
-        android:max="10"
-        android:progress="3"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:layout_below="@id/imageCount"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/generate"
-        android:text="Generate"
-        android:layout_marginTop="20sp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recycler"
-        android:layout_below="@id/generate"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-    <!-- Bottom Navigation View -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:menu="@menu/bottom_navigation_menu"
-        app:itemIconTint="@android:color/holo_blue_dark"
-        app:itemTextColor="@color/colorPrimaryDark"
-        app:labelVisibilityMode="labeled" />
+        android:text="Main Activity"
+        android:textSize="24sp"
+        android:layout_centerInParent="true"/>
 </RelativeLayout>

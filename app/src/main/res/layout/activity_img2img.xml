@@ -52,7 +52,7 @@
         android:background="@null"
         android:contentDescription="Choose from Gallery"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_gallery" />
+        android:src="@drawable/ic_gallery_choose_from" />
 
     <TextView
         android:id="@+id/text2"
@@ -190,4 +190,6 @@
         app:itemIconTint="@color/colorPrimary"
         app:itemTextColor="@color/color_selector"
         app:labelVisibilityMode="labeled" />
+        <!--app:itemIconTint="@android:color/holo_blue_dark"-->
+
 </RelativeLayout>

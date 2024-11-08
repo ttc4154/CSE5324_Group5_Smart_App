@@ -12,7 +12,7 @@
 <resources>
     <color name="colorPrimary">#727373</color>
     <color name="colorPrimaryDark">#010A64</color>
-    <color name="colorAccent">#FF03DAC5</color>
+    <color name="colorAccent">#1E88E5</color>
     <color name="nav_item_color">#FFFFFF</color>
     <color name="nav_item_color_dark">#3949AB</color>
     <color name="white">#FFFFFF</color>
