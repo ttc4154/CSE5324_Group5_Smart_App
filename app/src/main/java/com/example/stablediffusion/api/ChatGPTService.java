@@ -23,7 +23,7 @@ import java.util.Random;
 public class ChatGPTService {
     private static final String BASE_URL = "https://api.openai.com/";
     private static final String API_KEY = "your_key_here";
-            "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";
+    //"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";
     //"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"; // Securely manage API key!
 
     private final ApiService apiService;
