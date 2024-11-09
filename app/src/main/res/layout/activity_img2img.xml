@@ -144,42 +144,56 @@
 
     <Button
         android:id="@+id/generateInpaint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
         android:layout_below="@id/inpaintPromptLayout"
         android:layout_marginTop="0dp"
         android:layout_marginStart="16dp"
+        android:textSize="10sp"
         android:text="Imagine" />
-
-    <Button
-        android:textSize="10sp"
-        android:layout_width="70dp"
-        android:layout_height="40dp"
+    <!--ImageButton
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_toLeftOf="@id/list_item_download"
+        android:layout_marginEnd="10sp"
+        android:src="@android:drawable/ic_menu_share"
         android:id="@+id/cropButton"
-        android:layout_marginLeft="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"/-->
+    <ImageButton
+        android:layout_width="25sp"
+        android:layout_height="25sp"
+        android:layout_marginLeft="50sp"
+        android:layout_marginBottom="10sp"
+        android:src="@android:drawable/ic_menu_crop"
+        android:id="@+id/cropButton"
         android:layout_above="@id/bottom_navigation"
-        android:text="Crop" />
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/colorAccent" />
 
-    <!-- Rotate Button -->
-    <Button
-        android:textSize="10sp"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
+    <ImageButton
+        android:layout_width="25sp"
+        android:layout_height="25sp"
+        android:layout_marginLeft="30sp"
+        android:layout_marginBottom="10sp"
+        android:src="@android:drawable/ic_menu_rotate"
+        android:layout_toRightOf="@id/cropButton"
         android:id="@+id/rotateButton"
-        android:layout_toEndOf="@id/cropButton"
-        android:layout_margin="0dp"
         android:layout_above="@id/bottom_navigation"
-        android:text="Rotate" />
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/colorAccent"/>
 
-    <Button
-        android:textSize="10sp"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
+    <ImageButton
+        android:layout_width="25sp"
+        android:layout_height="25sp"
+        android:layout_marginLeft="30sp"
+        android:layout_marginBottom="10sp"
+        android:src="@drawable/baseline_brush_24"
+        android:layout_toRightOf="@id/rotateButton"
         android:id="@+id/brushSizeButton"
-        android:layout_toEndOf="@id/rotateButton"
-        android:layout_margin="0dp"
         android:layout_above="@id/bottom_navigation"
-        android:text="Brush Size" />
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/colorAccent"/>
+
     <SeekBar
         android:id="@+id/brushSizeSeekBar"
         android:layout_width="match_parent"
@@ -190,6 +204,18 @@
         android:layout_above="@id/rotateButton"
         android:layout_centerHorizontal="true"/>
 
+    <ImageButton
+        android:layout_width="25sp"
+        android:layout_height="25sp"
+        android:layout_marginLeft="30sp"
+        android:layout_marginBottom="10sp"
+        android:src="@android:drawable/ic_menu_save"
+        android:layout_toRightOf="@id/brushSizeButton"
+        app:tint="@color/colorAccent"
+        android:id="@+id/SaveImageButton"
+        android:layout_above="@id/bottom_navigation"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
@@ -199,6 +225,4 @@
         app:itemIconTint="@color/colorPrimary"
         app:itemTextColor="@color/color_selector"
         app:labelVisibilityMode="labeled" />
-        <!--app:itemIconTint="@android:color/holo_blue_dark"-->
-
 </RelativeLayout>

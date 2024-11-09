@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
@@ -45,6 +47,7 @@ import com.google.firebase.storage.UploadTask;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -73,7 +76,7 @@ public class Img2ImgActivity extends AppCompatActivity {
     private DrawingView drawingView; // Your custom drawing view
     private Uri imageUriForPhotoView; // The URI of the selected image
     private SeekBar brushSizeSeekBar;
-    private Button brushSizeButton;
+    private ImageButton brushSizeButton;
 
     // Activity Result Launcher for camera permission request
     private final ActivityResultLauncher<String> cameraPermissionLauncher = registerForActivityResult(
@@ -95,11 +98,12 @@ public class Img2ImgActivity extends AppCompatActivity {
 
         selectedImageView = findViewById(R.id.selectedImageView);
         drawingView = findViewById(R.id.drawingView);
-        Button cropButton = findViewById(R.id.cropButton);
-        Button rotateButton = findViewById(R.id.rotateButton);
+        ImageButton cropButton = findViewById(R.id.cropButton);
+        ImageButton rotateButton = findViewById(R.id.rotateButton);
         //Button maskButton = findViewById(R.id.maskButton);
         brushSizeSeekBar = findViewById(R.id.brushSizeSeekBar);
         brushSizeButton = findViewById(R.id.brushSizeButton);
+        ImageButton saveImageButton = findViewById(R.id.SaveImageButton);
 
         // Set default brush size
         drawingView.setBrushSize(10); // Set a default value, e.g., 10
@@ -135,6 +139,37 @@ public class Img2ImgActivity extends AppCompatActivity {
                 brushSizeSeekBar.setVisibility(View.GONE);
             }
         });
+
+        saveImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Retrieve the bitmap from DrawingView
+                Bitmap maskImage = drawingView.getDrawingBitmap();
+                if (maskImage != null) {
+                    // Convert the mask to black and white (grayscale)
+                    Bitmap blackAndWhiteMask = convertToBlackAndWhite(maskImage);
+                    // Save the bitmap to a file
+                    String savedPath = saveBitmapToFile(blackAndWhiteMask);
+                    if (savedPath != null) {
+                        maskImageUrl = savedPath; // Update the maskImageUrl with the saved path
+
+                        // Convert the saved file path to Uri
+                        File file = new File(savedPath);
+                        Uri imageUri = Uri.fromFile(file);
+
+                        // Call the uploadImageToFirebase method
+                        uploadImageToFirebase(imageUri, true); // Pass `true` for isMaskImageUrl
+
+                        Toast.makeText(Img2ImgActivity.this, "Mask saved and uploading!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(Img2ImgActivity.this, "Failed to save mask image", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Img2ImgActivity.this, "No mask image to save", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
         // Set the image URI to the PhotoView
         //setImageUri(imageUri);
@@ -278,7 +313,7 @@ public class Img2ImgActivity extends AppCompatActivity {
                 // Positive button to upload the selected image
                 builder.setPositiveButton("Yes", (dialog, which) -> {
                     if (imageUri != null) {
-                        uploadImageToFirebase(imageUri);
+                        uploadImageToFirebase(imageUri, false); //false for notMaskImageUrl
                     } else {
                         Toast.makeText(this, "No image selected to upload.", Toast.LENGTH_SHORT).show();
                     }
@@ -341,7 +376,7 @@ public class Img2ImgActivity extends AppCompatActivity {
                 // Positive button to upload the selected image
                 builder.setPositiveButton("Yes", (dialog, which) -> {
                     if (imageUri != null) {
-                        uploadImageToFirebase(imageUri);
+                        uploadImageToFirebase(imageUri, false); // false for notMaskImageUrl
                     } else {
                         Toast.makeText(this, "No image selected to upload.", Toast.LENGTH_SHORT).show();
                     }
@@ -360,7 +395,7 @@ public class Img2ImgActivity extends AppCompatActivity {
         }
     }
     // TODO::Add the ability to mask the image, aka image processing
-    private void uploadImageToFirebase(Uri imageUri) {
+    private void uploadImageToFirebase(Uri imageUri, boolean isMaskImageUrl) {
         if (imageUri == null) {
             Toast.makeText(Img2ImgActivity.this, "No image selected to upload.", Toast.LENGTH_SHORT).show();
             return;
@@ -391,13 +426,18 @@ public class Img2ImgActivity extends AppCompatActivity {
                         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                             progressDialog.dismiss();
                             String downloadUrl = uri.toString();
-                            initImageUrl = downloadUrl; // Set the URL for later use
-                            // Use Glide to load the image URL into the ImageView
-                            Glide.with(this)
-                                    .load(initImageUrl)
-                                    .into(selectedImageView);
-                            Log.d("ImageGalleryForCloud", "initImageUrl: " + initImageUrl);
-                            Toast.makeText(Img2ImgActivity.this, "Image uploaded and URL retrieved!", Toast.LENGTH_SHORT).show();
+                            if (isMaskImageUrl){
+                                maskImageUrl = downloadUrl;
+                                Log.d("ImageGalleryForCloud", "maskImageUrl: " + maskImageUrl);
+                            }else{
+                                initImageUrl = downloadUrl; // Set the URL for later use
+                                // Use Glide to load the image URL into the ImageView
+                                Glide.with(this)
+                                        .load(downloadUrl)
+                                        .into(selectedImageView);
+                                Log.d("ImageGalleryForCloud", "initImageUrl: " + initImageUrl);
+                                Toast.makeText(Img2ImgActivity.this, "Image uploaded and URL retrieved!", Toast.LENGTH_SHORT).show();
+                            }
                         }).addOnFailureListener(e -> {
                             progressDialog.dismiss();
                             Toast.makeText(Img2ImgActivity.this, "Failed to get URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -473,6 +513,52 @@ public class Img2ImgActivity extends AppCompatActivity {
                 .withMaxResultSize(800, 800)
                 .start(this);*/
     }
+
+    private String saveBitmapToFile(Bitmap bitmap) {
+        File directory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (directory != null && !directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String fileName = "maskImage_" + System.currentTimeMillis() + ".png";
+        File file = new File(directory, fileName);
+
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return file.getAbsolutePath();
+    }
+    private Bitmap convertToBlackAndWhite(Bitmap originalBitmap) {
+        int width = originalBitmap.getWidth();
+        int height = originalBitmap.getHeight();
+        Bitmap bwBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixelColor = originalBitmap.getPixel(x, y);
+
+                // Get the red, green, and blue values
+                int red = Color.red(pixelColor);
+                int green = Color.green(pixelColor);
+                int blue = Color.blue(pixelColor);
+
+                // Calculate the brightness using the grayscale formula
+                int gray = (int) (0.3 * red + 0.59 * green + 0.11 * blue);
+
+                // Set the pixel color to black or white based on brightness
+                int blackOrWhite = (gray < 128) ? Color.BLACK : Color.WHITE;
+                bwBitmap.setPixel(x, y, blackOrWhite);
+            }
+        }
+        return bwBitmap;
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
