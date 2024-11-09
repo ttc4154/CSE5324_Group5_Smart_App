@@ -31,7 +31,7 @@ public class ImageAdapterForCloud extends RecyclerView.Adapter<ImageAdapterForCl
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_item_for_cloud, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.img2img_cloud_gallery, parent, false);
         return new ViewHolder(view);
     }
 
@@ -57,7 +57,7 @@ public class ImageAdapterForCloud extends RecyclerView.Adapter<ImageAdapterForCl
 
         ViewHolder(View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.itemImageView);
+            imageView = itemView.findViewById(R.id.item_image_view_for_cloud);
         }
     }
 }

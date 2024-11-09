@@ -35,11 +35,11 @@
             android:theme="@style/AppTheme"/>
         <activity android:name=".login.UserProfileActivity"
             android:exported="true"
-            android:label="Edit User Profile"
+            android:label="User Profile"
             android:theme="@style/AppTheme"/>
         <activity android:name=".login.EditProfileActivity"
             android:exported="true"
-            android:label="Settings"
+            android:label="Edit User Profile"
             android:theme="@style/AppTheme"/>
         <activity
             android:name=".appactivity.Img2ImgActivity"

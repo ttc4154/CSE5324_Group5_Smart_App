@@ -13,7 +13,7 @@
             android:id="@+id/setting_api_key"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="API Key Settings"
+            android:text="SDA API Key Settings"
             android:textSize="18sp"
             android:padding="16dp"
             android:clickable="true"

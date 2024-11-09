@@ -34,10 +34,10 @@ public class ImageGalleryForCloud extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gallery);
+        setContentView(R.layout.img2img_cloud_gallery);
 
-        recyclerView = findViewById(R.id.recycler_view);
-        int numberOfColumns = 2; // Set 3 columns for grid layout
+        recyclerView = findViewById(R.id.recycler_view_for_cloud);
+        int numberOfColumns = 1; // Set 3 columns for grid layout
         recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
         imageAdapter = new ImageAdapterForCloud(imageList, this, this::onImageClick);
         recyclerView.setAdapter(imageAdapter);

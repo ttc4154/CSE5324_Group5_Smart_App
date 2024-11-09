@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -71,6 +72,8 @@ public class Img2ImgActivity extends AppCompatActivity {
     private PhotoView selectedImageViewForPhotoView;
     private DrawingView drawingView; // Your custom drawing view
     private Uri imageUriForPhotoView; // The URI of the selected image
+    private SeekBar brushSizeSeekBar;
+    private Button brushSizeButton;
 
     // Activity Result Launcher for camera permission request
     private final ActivityResultLauncher<String> cameraPermissionLauncher = registerForActivityResult(
@@ -94,7 +97,45 @@ public class Img2ImgActivity extends AppCompatActivity {
         drawingView = findViewById(R.id.drawingView);
         Button cropButton = findViewById(R.id.cropButton);
         Button rotateButton = findViewById(R.id.rotateButton);
-        Button maskButton = findViewById(R.id.maskButton);
+        //Button maskButton = findViewById(R.id.maskButton);
+        brushSizeSeekBar = findViewById(R.id.brushSizeSeekBar);
+        brushSizeButton = findViewById(R.id.brushSizeButton);
+
+        // Set default brush size
+        drawingView.setBrushSize(10); // Set a default value, e.g., 10
+
+        // Toggle SeekBar visibility on button click
+        brushSizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (brushSizeSeekBar.getVisibility() == View.GONE) {
+                    brushSizeSeekBar.setVisibility(View.VISIBLE);
+                } else {
+                    brushSizeSeekBar.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        // Set up SeekBar listener to adjust brush size
+        brushSizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                float brushSize = progress;
+                drawingView.setBrushSize(brushSize);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Optional: actions when user starts adjusting the SeekBar
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Hide the SeekBar after user stops adjusting
+                brushSizeSeekBar.setVisibility(View.GONE);
+            }
+        });
+
         // Set the image URI to the PhotoView
         //setImageUri(imageUri);
         // Set up button click listeners
@@ -249,7 +290,7 @@ public class Img2ImgActivity extends AppCompatActivity {
                     Toast.makeText(this, "Image selection canceled.", Toast.LENGTH_SHORT).show();
                 });
                 builder.show();
-                
+
                 Log.d("ImageGalleryForCloud", "initImageUrl: " + initImageUrl);
                 Toast.makeText(this, "Operation PICK_IMAGE_FROM_LOCAL", Toast.LENGTH_SHORT).show();
                 return; // Exit after handling PICK_IMAGE

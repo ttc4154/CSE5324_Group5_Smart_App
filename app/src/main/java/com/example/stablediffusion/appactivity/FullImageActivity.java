@@ -13,7 +13,7 @@ public class FullImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_full_image);
+        setContentView(R.layout.gallery_full_image);
 
         imageView = findViewById(R.id.full_image_view);
 

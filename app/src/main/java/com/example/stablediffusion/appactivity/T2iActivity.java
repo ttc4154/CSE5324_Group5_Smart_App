@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stablediffusion.R;
+import com.example.stablediffusion.api.ChatGPTService;
 import com.example.stablediffusion.api.ImageRequest; // Import ImageRequest model
 import com.example.stablediffusion.api.ImageResponse; // Import ImageResponse model
 import com.example.stablediffusion.login.UserProfileActivity;
@@ -33,12 +35,13 @@ import java.util.Objects;
 public class T2iActivity extends AppCompatActivity {
     private TextInputLayout promptLayout;
     private TextInputEditText promptET;
+    private Button clearPromptButton;
     private SeekBar width;
     private SeekBar height;
     private SeekBar imageCount;
     private RecyclerView recyclerView;
     private Button generateButton;
-    //private Button logoutButton; // Add a logout button
+    private Button chatGptButton;
     private ProgressDialog progressDialog;
     private FirebaseAuth mAuth; // Firebase Auth instance
 
@@ -68,10 +71,12 @@ public class T2iActivity extends AppCompatActivity {
         // Initialize UI elements
         promptLayout = findViewById(R.id.promptLayout);
         promptET = findViewById(R.id.promptET);
+        clearPromptButton = findViewById(R.id.clear_prompt);
         width = findViewById(R.id.width);
         height = findViewById(R.id.height);
         imageCount = findViewById(R.id.imageCount);
         generateButton = findViewById(R.id.generate);
+        chatGptButton = findViewById(R.id.chat_gpt);
         recyclerView = findViewById(R.id.recycler);
 
         // ProgressDialog initialization
@@ -105,6 +110,47 @@ public class T2iActivity extends AppCompatActivity {
                         );
                     }
                 }
+            }
+        });
+
+        clearPromptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Clear the text from the prompt TextInputEditText
+                if (promptET != null) {
+                    promptET.setText(""); // Clear the text
+                }
+            }
+        });
+
+        chatGptButton.setOnClickListener(new View.OnClickListener() {
+            /*"Generate a random image prompt."
+                "Generate a random prompt to create an image."
+                "Generate a random image generation prompt."*/
+            @Override
+            public void onClick(View v) {
+                // Define the prompt text to send to ChatGPT
+                String promptText = "Generate a random image prompt.";
+                // Call the ChatGPT API with the prompt text and handle the response
+                Log.d("chatGptButton", "Sending request with prompt: " + promptText);
+                // Call the ChatGPT API with the prompt text and handle the response
+                ChatGPTService chatService = new ChatGPTService();
+                chatService.getChatResponse(promptText, new ChatGPTService.ChatResponseCallback() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the response in a TextView (or handle as needed)
+                        //runOnUiThread(() -> responseTextView.setText(response));
+                        promptET.setText(response);
+                        Log.d("chatGptButton", "Response received: " + response);
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        Log.d("chatGptButton", "Error: " + error);
+                        // Display the error in case of failure
+                        //runOnUiThread(() -> responseTextView.setText("Error: " + error));
+                    }
+                });
             }
         });
     }

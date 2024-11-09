@@ -139,6 +139,7 @@
         android:layout_width="match_parent"
         android:layout_height="600dp"
         android:layout_below="@id/generateInpaint"
+        android:layout_above="@id/rotateButton"
         android:background="@android:color/transparent"/>
 
     <Button
@@ -170,16 +171,24 @@
         android:layout_above="@id/bottom_navigation"
         android:text="Rotate" />
 
-    <!-- Masking Button -->
     <Button
-        android:id="@+id/maskButton"
         android:textSize="10sp"
-        android:layout_width="70dp"
+        android:layout_width="100dp"
         android:layout_height="40dp"
+        android:id="@+id/brushSizeButton"
         android:layout_toEndOf="@id/rotateButton"
         android:layout_margin="0dp"
         android:layout_above="@id/bottom_navigation"
-        android:text="Mask" />
+        android:text="Brush Size" />
+    <SeekBar
+        android:id="@+id/brushSizeSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:visibility="gone"
+        android:layout_margin="0dp"
+        android:layout_above="@id/rotateButton"
+        android:layout_centerHorizontal="true"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

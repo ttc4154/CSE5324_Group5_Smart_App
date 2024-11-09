@@ -13,32 +13,52 @@ public class DrawingView extends View {
     private Paint drawPaint;
     private Path drawPath;
     private Bitmap bitmap;
-    private Canvas canvas; // Canvas to draw on the bitmap
+    private Canvas bitmapCanvas;
     private OnDrawingCompleteListener listener;
+    private float brushSize = 10f; // Default brush size
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
-    public void onDrawingCompleteListener(OnDrawingCompleteListener listener) {
+
+    public void setOnDrawingCompleteListener(OnDrawingCompleteListener listener) {
         this.listener = listener;
     }
+
     private void init() {
         drawPaint = new Paint();
-        drawPaint.setColor(0xFFFFFFFF); // White color for masking
+        drawPaint.setColor(0xFFFFFFFF);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeWidth(10);
         drawPaint.setAntiAlias(true);
         drawPath = new Path();
     }
 
+    // Method to set the brush size
+    public void setBrushSize(float size) {
+        brushSize = size;
+        drawPaint.setStrokeWidth(brushSize);
+        invalidate(); // Refresh the view with the new brush size
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (bitmap == null) {
+            bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            bitmapCanvas = new Canvas(bitmap);
+            bitmapCanvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
+        }
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (bitmap != null) {
-            canvas.drawBitmap(bitmap, 0, 0, null); // Draw the current bitmap
+            canvas.drawBitmap(bitmap, 0, 0, null);
         }
-        canvas.drawPath(drawPath, drawPaint); // Draw the active path
+        canvas.drawPath(drawPath, drawPaint);
     }
 
     @Override
@@ -54,51 +74,47 @@ public class DrawingView extends View {
                 drawPath.lineTo(touchX, touchY);
                 break;
             case MotionEvent.ACTION_UP:
-                // Draw the path on the bitmap, making it persistent
-                canvas.drawPath(drawPath, drawPaint);
-                drawPath.reset(); // Reset the path for new strokes
+                bitmapCanvas.drawPath(drawPath, drawPaint);
+                drawPath.reset();
+                if (listener != null) {
+                    listener.onDrawingComplete();
+                }
                 break;
             default:
                 return false;
         }
-        invalidate(); // Redraw the view
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            // Notify completion of drawing
-            /*if (onDrawingCompleteListener != null) {
-                onDrawingCompleteListener.onDrawingComplete();
-            }*/
-        }
+        invalidate();
         return true;
     }
 
-    // Add method to retrieve the drawn bitmap
+    // Method to retrieve the masked bitmap
+    public Bitmap getMaskedBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap newBitmap) {
+        if (newBitmap != null) {
+            bitmap = newBitmap.copy(Bitmap.Config.ARGB_8888, true);
+            bitmapCanvas = new Canvas(bitmap);
+            invalidate();
+        }
+    }
+
+    public void clearDrawing() {
+        if (bitmapCanvas != null) {
+            bitmapCanvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
+        }
+        drawPath.reset();
+        invalidate();
+    }
+
+    public interface OnDrawingCompleteListener {
+        void onDrawingComplete();
+    }
     public Bitmap getDrawingBitmap() {
         Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         draw(canvas); // Call draw to capture the drawing on canvas
         return bitmap;
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true); // Copy the bitmap to make it mutable
-        canvas = new Canvas(this.bitmap); // Set the canvas to draw on this bitmap
-        invalidate();
-    }
-
-    public Bitmap getMaskedBitmap() {
-        // Return the bitmap with the mask applied
-        return bitmap;
-    }
-    // Add this interface
-    public interface OnDrawingCompleteListener {
-        void onDrawingComplete();
-    }
-    public void clearDrawing() {
-        // Clear both the path and the bitmap to start fresh
-        if (canvas != null) {
-            canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR); // Clear the bitmap
-        }
-        drawPath.reset();
-        invalidate();
     }
 }

@@ -55,7 +55,7 @@ public class ImageRequest extends RecyclerView.Adapter<ImageRequest.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.image_list_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.t2i_image_list_item, parent, false);
         return new ViewHolder(view);
     }
 
