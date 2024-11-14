@@ -216,6 +216,18 @@
         android:layout_above="@id/bottom_navigation"
         android:background="?attr/selectableItemBackgroundBorderless"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30sp"
+        android:layout_marginBottom="10sp"
+        android:text="CLEAR"
+        android:layout_toRightOf="@id/SaveImageButton"
+        android:id="@+id/clearButton"
+        android:layout_above="@id/bottom_navigation"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:textColor="@color/colorAccent" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"

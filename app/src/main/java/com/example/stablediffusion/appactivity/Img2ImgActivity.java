@@ -98,12 +98,14 @@ public class Img2ImgActivity extends AppCompatActivity {
 
         selectedImageView = findViewById(R.id.selectedImageView);
         drawingView = findViewById(R.id.drawingView);
+
         ImageButton cropButton = findViewById(R.id.cropButton);
         ImageButton rotateButton = findViewById(R.id.rotateButton);
         //Button maskButton = findViewById(R.id.maskButton);
         brushSizeSeekBar = findViewById(R.id.brushSizeSeekBar);
         brushSizeButton = findViewById(R.id.brushSizeButton);
         ImageButton saveImageButton = findViewById(R.id.SaveImageButton);
+        Button clearButton = findViewById(R.id.clearButton);
 
         // Set default brush size
         drawingView.setBrushSize(10); // Set a default value, e.g., 10
@@ -177,6 +179,8 @@ public class Img2ImgActivity extends AppCompatActivity {
         cropButton.setOnClickListener(v -> cropImage());
         rotateButton.setOnClickListener(v -> rotateImage());
         //maskButton.setOnClickListener(v -> applyMask());
+        clearButton.setOnClickListener(v -> drawingView.clearDrawing());
+
 
         imageAdapter = new ImageAdapterForCloud(imageList, Img2ImgActivity.this, this::onImageClick);
 
