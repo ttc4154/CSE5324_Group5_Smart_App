@@ -50,7 +50,7 @@ public class InpaintResponse {
                 Toast.makeText(context, "Mask image URL is required", Toast.LENGTH_SHORT).show();
                 return;
             }
-            String key = "your_key_here"; // w9vuSH0efmulpEFaB1qWiXoHOowHhUMw1RyFMWFozpHJyCGiqNFGyg5wWGIA
+            String key = "your_key_here";
             js.put("key", key);
             //js.put("init_image", encodeImageToBase64(initImageUrl)); // Encode initial image
             js.put("init_image", initImageUrl); // Encode initial image
