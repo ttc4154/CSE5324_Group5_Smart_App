@@ -39,9 +39,9 @@ An android smart app for CSE5324
 
 ### Upload edited image to cloud 
 
-*After image is edited, you can press the cloud upload button at the top of the image (indicated in red box below). 
+* After image is edited, you can press the cloud upload button at the top of the image (indicated in red box below). 
 
 
 ### Download edited image 
 
-After image is edited, you can download the image to your phone (indicated in blue box below) 
+* After image is edited, you can download the image to your phone (indicated in blue box below) 
