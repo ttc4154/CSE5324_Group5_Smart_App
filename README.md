@@ -19,6 +19,9 @@ An android smart app for CSE5324
 
 ## Txt2Img 
 * To generate an AI image of your choice, type in a prompt in the ‘Prompt Text’ box and click on ‘Generate’. Click on ‘AI Prompt’ if you would like a randomly generated prompt.
+<div align="center">
+  <img src="images/txt2img.png">
+</div>
 
 ## Inpainting 
 
