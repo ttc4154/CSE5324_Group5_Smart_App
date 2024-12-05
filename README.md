@@ -25,7 +25,9 @@ An android smart app for CSE5324
 
 ## Inpainting 
 
-* After logging in, go to “Inpaint” tab at the bottom of the app. 
+* After logging in, go to “Inpaint” tab at the bottom of the app.
+
+![InpaintTutorial](images/InpaintingScreenShot.png)
 
 ### Select Picture to Edit 
 
@@ -47,4 +49,6 @@ An android smart app for CSE5324
 
 ### Download edited image 
 
-* After image is edited, you can download the image to your phone (indicated in blue box below) 
+* After image is edited, you can download the image to your phone (indicated in blue box below)
+
+![UploadingDownloadingTutorial](images/UploadDownloadImg.png)
